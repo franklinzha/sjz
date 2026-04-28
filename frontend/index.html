@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Radar UI</title>
+    <style>
+        body { margin:0; background:#000; }
+        canvas { background:#111; display:block; margin:auto; }
+    </style>
+</head>
+
+<body>
+
+<canvas id="c" width="800" height="500"></canvas>
+
+<script>
+
+const SERVER_IP = "ws://127.0.0.1:8000/ws"  // 🔥 改这里
+
+const canvas = document.getElementById("c")
+const ctx = canvas.getContext("2d")
+
+const ws = new WebSocket(SERVER_IP)
+
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data)
+
+    ctx.clearRect(0, 0, 800, 500)
+
+    // 👇 雷达点
+    if (data.players) {
+        data.players.forEach(p => {
+            ctx.fillStyle = "lime"
+            ctx.beginPath()
+            ctx.arc(p.x, p.y, 5, 0, Math.PI * 2)
+            ctx.fill()
+        })
+    }
+
+    // 👇 tick显示
+    ctx.fillStyle = "white"
+    ctx.fillText("tick: " + data.tick, 10, 20)
+}
+
+</script>
+
+</body>
+</html>
